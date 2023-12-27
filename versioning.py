@@ -8,22 +8,39 @@ Installer chaque version de NumPy dans un environnement virtuel séparé.
 Activer chaque environnement et localiser le répertoire d'installation de NumPy.
 Exécuter analyze_package sur chaque répertoire.
 
-virtualenv numpy_v1
-virtualenv numpy_v2
-
 https://numpy.org/news/#releases
-
-Pour chaque environnement (e.g. numpy_v1) :
-    
-numpy_v1\Scripts\activate
-pip install numpy==[version_1]
-python -c "import numpy; print(numpy.__path__)"
-deactivate
-
 """
 import ast
 import os
+import difflib
 
+def read_file_contents(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        return file.read()
+
+
+def compare_files(file_path_v1, file_path_v2):
+    old_code = read_file_contents(file_path_v2)
+    new_code = read_file_contents(file_path_v1)
+
+    d = difflib.Differ()
+    return list(d.compare(old_code.splitlines(), new_code.splitlines()))
+
+def compare_versions(directory_v1, directory_v2):
+    diffs = {}
+
+    for root, dirs, files in os.walk(directory_v1):
+        for file in files:
+            if file.endswith('.py'):
+                file_path_v1 = os.path.join(root, file)
+                file_path_v2 = file_path_v1.replace(directory_v1, directory_v2)
+
+                if os.path.exists(file_path_v2):
+                    diff = compare_files(file_path_v1, file_path_v2)
+                    if diff:
+                        diffs[file] = diff
+    return diffs
+    
 def analyze_code(code, file_path, output_file):
     try:
         tree = ast.parse(code)
@@ -49,8 +66,21 @@ def analyze_package(directory, output_file):
                 file_path = os.path.join(root, file)
                 analyze_file(file_path, output_file)
 
-numpy_dir_v1 = 'C:\\Documents\\MINES ST-Etienne\\2023-2024\\Cours Dauphine\\POO\\Unittest_local\\numpy_v1\\Lib\\site-packages\\numpy'
-numpy_dir_v2 = 'C:\\Documents\\MINES ST-Etienne\\2023-2024\\Cours Dauphine\\POO\\Unittest_local\\numpy_v2\\Lib\\site-packages\\numpy'
+if __name__ == "__main__":
+    
+    with open('envpath.txt', 'r') as file:
+        lines = file.readlines()
 
-analyze_package(numpy_dir_v1, 'numpy_v1_analysis.txt')
-analyze_package(numpy_dir_v2, 'numpy_v2_analysis.txt')
+    numpy_dir_v1 = lines[0].strip()[2:-2]
+    numpy_dir_v2 = lines[1].strip()[2:-2]
+
+    changes = compare_versions(numpy_dir_v1, numpy_dir_v2)
+    
+    with open('txt_compare.txt', 'w', encoding='utf-8') as out_file:
+        for file, diff in changes.items():
+            out_file.write(f"Changes in {file}:\n")
+            out_file.write('\n'.join(diff))
+            out_file.write("\n\n")
+            
+    analyze_package(numpy_dir_v1, 'numpy_v1_analysis.txt')
+    analyze_package(numpy_dir_v2, 'numpy_v2_analysis.txt')
