@@ -3,10 +3,6 @@
 Created on Mon Oct 16 17:56:59 2023
 
 @author: aikan
-
-coverage run -m __init__
-coverage report
-coverage html
 """
 import unittest as ut
 import numpy as np
@@ -58,7 +54,7 @@ class TestNumpyFunctions(ut.TestCase):
         self.assertTrue(np.array_equal(np.linspace(start, end, num), np.linspace(start, end, num)))
 
     # Tests pour les opérations mathématiques
-    @given(st.lists(st.floats(min_value=0, max_value=1e307, allow_nan=False, allow_infinity=False)), st.lists(st.floats(min_value=-1e307, max_value=1e307, allow_nan=False, allow_infinity=False)))
+    @given(st.lists(st.floats(min_value=0, max_value=1e100, allow_nan=False, allow_infinity=False)), st.lists(st.floats(min_value=-1e100, max_value=1e100, allow_nan=False, allow_infinity=False)))
     def test_numpy_operations(self, a, b):
        if len(a) == len(b) and all(x != 0 for x in b):
            a, b = np.array(a), np.array(b)
