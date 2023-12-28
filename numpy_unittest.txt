@@ -51,7 +51,7 @@ FOR %%k IN (1 2) DO (
     echo Activating numpy_v%%k environment and running tests... >> report.txt 2>>&1
 
     coverage run -m unittest __init__ > temp_results.txt 2>>&1
-    coverage report >> report.txt
+    coverage report -m >> report.txt
     echo.>> report.txt
 
     type temp_results.txt >> report.txt
@@ -78,7 +78,7 @@ FOR %%j IN (1 2) DO (
     coverage run -m unittest __init__ > temp_results.txt 2>>&1
 
     REM Ajouter le rapport de couverture au fichier report.txt
-    coverage report >> report.txt
+    coverage report -m >> report.txt
     echo.>> report.txt
 
     REM Ajouter les résultats des tests stockés temporairement à report.txt
