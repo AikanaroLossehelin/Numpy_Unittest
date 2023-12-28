@@ -47,10 +47,10 @@ numpy.linspace : Crée un array de valeurs espacées uniformément.
 numpy.add, numpy.subtract, numpy.multiply, numpy.divide : Opérations arithmétiques de base.  
 numpy.sqrt : Racine carrée.  
 numpy.exp : Exponentielle.  
-numpy.sin, numpy.cos, numpy.tan : Fonctions trigonométriques. 
-numpy.log/numpy.log10 : Logarithmes naturel et décimal.
-numpy.power : Élévation à une puissance.
-numpy.hypot : Calculer l'hypoténuse de nombres.
+numpy.sin, numpy.cos, numpy.tan : Fonctions trigonométriques.  
+numpy.log/numpy.log10 : Logarithmes naturel et décimal.  
+numpy.power : Élévation à une puissance.  
+numpy.hypot : Calculer l'hypoténuse de nombres.  
 
 - **Manipulation d'Arrays:**
 
@@ -58,9 +58,9 @@ numpy.reshape : Modifie la forme d'un array.
 numpy.concatenate : Concatène des arrays.  
 numpy.split : Divise un array en plusieurs sous-arrays.  
 numpy.transpose : Transpose un array. 
-numpy.ravel : Aplatir un tableau en 1D.
-numpy.expand_dims : Ajouter une nouvelle dimension.
-numpy.squeeze : Supprimer les axes de longueur un.
+numpy.ravel : Aplatir un tableau en 1D.  
+numpy.expand_dims : Ajouter une nouvelle dimension.  
+numpy.squeeze : Supprimer les axes de longueur un.  
 
 - **Statistiques et Aggrégations:**
 
@@ -68,33 +68,33 @@ numpy.mean : Moyenne.
 numpy.median : Médiane.  
 numpy.std : Écart type.  
 numpy.sum : Somme des éléments. 
-numpy.max/numpy.min : Trouver le maximum/minimum dans un tableau.
-numpy.argmax/numpy.argmin : Trouver les indices du maximum/minimum.
-numpy.var : Calculer la variance.
-numpy.random.normal : Générer des données normalement distribuées.
-numpy.percentile : Calculer le percentile.
-numpy.histogram : Calculer l'histogramme d'un jeu de données.
+numpy.max/numpy.min : Trouver le maximum/minimum dans un tableau.  
+numpy.argmax/numpy.argmin : Trouver les indices du maximum/minimum.  
+numpy.var : Calculer la variance.  
+numpy.random.normal : Générer des données normalement distribuées.  
+numpy.percentile : Calculer le percentile.  
+numpy.histogram : Calculer l'histogramme d'un jeu de données.  
 
 - **Algèbre Linéaire:**
 
 numpy.linalg.inv : Inversion de matrice.  
 numpy.linalg.det : Déterminant d'une matrice.  
 numpy.dot : Produit scalaire ou produit matriciel. 
-numpy.trace : Calculer la trace d'une matrice.
-numpy.linalg.eig : Calculer les valeurs et vecteurs propres.
-numpy.linalg.svd : Décomposition en valeurs singulières.
+numpy.trace : Calculer la trace d'une matrice.  
+numpy.linalg.eig : Calculer les valeurs et vecteurs propres.  
+numpy.linalg.svd : Décomposition en valeurs singulières.  
 
 - **Comparaison et logique:**
 
-numpy.equal/numpy.not_equal : Tests d'égalité ou de différence.
-numpy.greater/numpy.less : Comparaison supérieure ou inférieure.
-numpy.logical_and/numpy.logical_or : Opérations logiques.
+numpy.equal/numpy.not_equal : Tests d'égalité ou de différence.  
+numpy.greater/numpy.less : Comparaison supérieure ou inférieure.  
+numpy.logical_and/numpy.logical_or : Opérations logiques.  
 
 - **Opérations sur les chaînes de caractères:**
 
-numpy.char.add : Concaténer des chaînes de caractères.
-numpy.char.upper/numpy.char.lower : Convertir en majuscules ou minuscules.
-numpy.char.strip : Supprimer les espaces de début et de fin.
+numpy.char.add : Concaténer des chaînes de caractères.  
+numpy.char.upper/numpy.char.lower : Convertir en majuscules ou minuscules.  
+numpy.char.strip : Supprimer les espaces de début et de fin.  
 
 
 
