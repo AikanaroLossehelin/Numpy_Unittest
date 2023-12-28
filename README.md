@@ -67,7 +67,7 @@ numpy.squeeze : Supprimer les axes de longueur un.
 numpy.mean : Moyenne.  
 numpy.median : Médiane.  
 numpy.std : Écart type.  
-numpy.sum : Somme des éléments. 
+numpy.sum : Somme des éléments.   
 numpy.max/numpy.min : Trouver le maximum/minimum dans un tableau.  
 numpy.argmax/numpy.argmin : Trouver les indices du maximum/minimum.  
 numpy.var : Calculer la variance.  
@@ -79,7 +79,7 @@ numpy.histogram : Calculer l'histogramme d'un jeu de données.
 
 numpy.linalg.inv : Inversion de matrice.  
 numpy.linalg.det : Déterminant d'une matrice.  
-numpy.dot : Produit scalaire ou produit matriciel. 
+numpy.dot : Produit scalaire ou produit matriciel.   
 numpy.trace : Calculer la trace d'une matrice.  
 numpy.linalg.eig : Calculer les valeurs et vecteurs propres.  
 numpy.linalg.svd : Décomposition en valeurs singulières.  
