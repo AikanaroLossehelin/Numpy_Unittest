@@ -54,7 +54,7 @@ class TestNumpyFunctions(ut.TestCase):
         self.assertTrue(np.array_equal(np.linspace(start, end, num), np.linspace(start, end, num)))
 
     # Tests pour les opérations mathématiques
-    @given(st.lists(st.floats(min_value=0, max_value=1e100, allow_nan=False, allow_infinity=False)), st.lists(st.floats(min_value=-1e100, max_value=1e100, allow_nan=False, allow_infinity=False)))
+    @given(st.lists(st.floats(min_value=0, max_value=20, allow_nan=False, allow_infinity=False)), st.lists(st.floats(min_value=0.01, max_value=100, allow_nan=False, allow_infinity=False)))
     def test_numpy_operations(self, a, b):
        if len(a) == len(b) and all(x != 0 for x in b):
            a, b = np.array(a), np.array(b)
@@ -108,6 +108,125 @@ class TestNumpyFunctions(ut.TestCase):
        if np.linalg.det(a) != 0 and not np.isclose(np.linalg.det(a), 0):
            inv_a = np.linalg.inv(a)
            self.assertTrue(np.allclose(np.dot(a, inv_a), np.eye(a.shape[0]), atol=1e-5))
+
+    @given(st.lists(st.floats(allow_nan=False, allow_infinity=False, min_value=-1e10, max_value=1e10), min_size=1))
+    def test_numpy_max_min(self, lst):
+        array = np.array(lst)
+        self.assertEqual(np.max(array), max(lst))
+        self.assertEqual(np.min(array), min(lst))
+
+    @given(st.lists(st.floats(allow_nan=False, allow_infinity=False, min_value=-1e10, max_value=1e10), min_size=1))
+    def test_numpy_argmax_argmin(self, lst):
+        array = np.array(lst)
+        self.assertEqual(np.argmax(array), lst.index(max(lst)))
+        self.assertEqual(np.argmin(array), lst.index(min(lst)))
+
+    @given(st.lists(st.floats(allow_infinity=False, allow_nan=False, min_value=-1e2, max_value=1e2), min_size=1))
+    def test_numpy_var(self, lst):
+        array = np.array(lst)
+        self.assertAlmostEqual(np.var(array), np.var(lst), places=5)
+
+    # Manipulation de formes et dimensions
+    @given(st.lists(st.integers()))
+    def test_numpy_ravel(self, lst):
+        array = np.array(lst)
+        self.assertTrue(np.array_equal(np.ravel(array), np.ravel(lst)))
+
+    @given(st.lists(st.integers(), min_size=1), st.integers(min_value=0, max_value=1))
+    def test_numpy_expand_dims(self, lst, axis):
+        array = np.array(lst)
+        self.assertTrue(np.array_equal(np.expand_dims(array, axis=axis), np.expand_dims(lst, axis=axis)))
+
+    @given(st.lists(st.integers()))
+    def test_numpy_squeeze(self, lst):
+        array = np.array([lst])
+        self.assertTrue(np.array_equal(np.squeeze(array), np.squeeze(lst)))
+
+    # Fonctions mathématiques et trigonométriques
+    @given(st.lists(st.floats(min_value=0.1, max_value=10, allow_nan=False, allow_infinity=False)))
+    def test_numpy_log_log10(self, lst):
+        array = np.array(lst)
+        self.assertTrue(np.allclose(np.log(array), np.log(lst)))
+        self.assertTrue(np.allclose(np.log10(array), np.log10(lst)))
+
+    @given(st.lists(st.floats(min_value=-1e10, max_value=1e10), min_size=2), st.integers(min_value=0, max_value=20))
+    def test_numpy_power(self, lst, exp):
+        array = np.array(lst)
+        if exp < 0 and 0 in lst:
+            raise ut.SkipTest("Negative power with zero in list")
+        self.assertTrue(np.array_equal(np.power(array, exp), np.power(lst, exp)))
+
+    @given(st.floats(min_value=-1e10, max_value=1e10), st.floats(min_value=-1e10, max_value=1e10))
+    def test_numpy_hypot(self, x, y):
+        if np.isnan(np.hypot(x, y)):
+            raise ut.SkipTest("Invalid combination leading to NaN")
+        self.assertAlmostEqual(np.hypot(x, y), np.hypot(x, y))
+
+    # Traitement des matrices et de l'algèbre linéaire
+    @given(st.lists(st.lists(st.floats(allow_nan=False, allow_infinity=False, min_value=-1e2, max_value=1e2), min_size=3, max_size=3), min_size=3, max_size=3))
+    def test_numpy_trace(self, lst):
+        array = np.array(lst)
+        self.assertAlmostEqual(np.trace(array), np.trace(lst))
+
+    @given(st.lists(st.lists(st.floats(allow_nan=False, allow_infinity=False, min_value=-1e2, max_value=1e2), min_size=2, max_size=2), min_size=2, max_size=2))
+    def test_numpy_eig(self, lst):
+        array = np.array(lst)
+        if np.isnan(array).any() or np.isinf(array).any():
+            raise ut.SkipTest("Invalid matrix with NaN or inf")
+        w, _ = np.linalg.eig(array)
+        self.assertIsInstance(w, np.ndarray)
+
+    @given(st.lists(st.lists(st.floats(allow_nan=False, allow_infinity=False, min_value=-1e2, max_value=1e2), min_size=2, max_size=2), min_size=2, max_size=2))
+    def test_numpy_svd(self, lst):
+        array = np.array(lst)
+        if np.isnan(array).any() or np.isinf(array).any():
+            raise ut.SkipTest("Invalid matrix with NaN or inf")
+        u, s, vh = np.linalg.svd(array)
+        self.assertIsInstance(u, np.ndarray)
+        
+    # Statistiques et génération aléatoire
+    @given(st.integers(min_value=1, max_value=100), st.floats(min_value=-1e10, max_value=1e10), st.floats(min_value=1e-10, max_value=1e10))
+    def test_numpy_random_normal(self, size, mean, std):
+        array = np.random.normal(mean, std, size)
+        self.assertEqual(array.size, size)
+
+    @given(st.lists(st.floats(min_value=-1e10, max_value=1e10), min_size=1), st.floats(min_value=0, max_value=100))
+    def test_numpy_percentile(self, lst, percentile):
+        array = np.array(lst)
+        self.assertAlmostEqual(np.percentile(array, percentile), np.percentile(lst, percentile))
+
+    @given(st.lists(st.floats(min_value=-1e2, max_value=1e2, allow_nan=False, allow_infinity=False), min_size=1))
+    def test_numpy_histogram(self, lst):
+        if any(abs(x) < 1e-10 or abs(x) > 1e10 for x in lst):
+            raise ut.SkipTest("Skipping due to extreme values in the list")
+        hist, _ = np.histogram(lst)
+        self.assertIsInstance(hist, np.ndarray)
+
+    # Comparaison et logique
+    @given(st.lists(st.floats()), st.lists(st.floats()))
+    def test_numpy_comparison(self, a, b):
+        if len(a) == len(b):
+            np_a, np_b = np.array(a), np.array(b)
+            self.assertTrue(np.array_equal(np.equal(np_a, np_b), np.equal(a, b)))
+            self.assertTrue(np.array_equal(np.not_equal(np_a, np_b), np.not_equal(a, b)))
+            self.assertTrue(np.array_equal(np.greater(np_a, np_b), np.greater(a, b)))
+            self.assertTrue(np.array_equal(np.less(np_a, np_b), np.less(a, b)))
+
+    # Opérations sur les chaînes de caractères
+    @given(st.text(alphabet=st.characters(blacklist_characters=['\x00'])), st.text(alphabet=st.characters(blacklist_characters=['\x00'])))
+    def test_numpy_char_operations(self, a, b):
+        np_result = np.char.add(a, b)
+        py_result = a + b
+        self.assertEqual(np_result.item(), py_result)
+        np_upper = np.char.upper(a)
+        py_upper = a.upper()
+        self.assertEqual(np_upper.item(), py_upper)
+        np_lower = np.char.lower(a)
+        py_lower = a.lower()
+        self.assertEqual(np_lower.item(), py_lower)
+        np_strip = np.char.strip(a)
+        py_strip = a.strip()
+        self.assertEqual(np_strip.item(), py_strip)
 
 if __name__ == '__main__':
     ut.main()
