@@ -6,13 +6,20 @@ Created on Sat Dec 23 12:20:34 2023
 
 Installer chaque version de NumPy dans un environnement virtuel séparé.
 Activer chaque environnement et localiser le répertoire d'installation de NumPy.
-Exécuter analyze_package sur chaque répertoire.
+Exécuter versioning.py
 
+Liste des versions de Numpy :
 https://numpy.org/news/#releases
 """
 import ast
 import os
 import difflib
+
+###########################################################################################
+#
+# COMPARAISON DES SCRIPTS ENTRE VERSIONS
+#
+###########################################################################################
 
 def read_file_contents(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -40,7 +47,14 @@ def compare_versions(directory_v1, directory_v2):
                     if diff:
                         diffs[file] = diff
     return diffs
-    
+
+
+###########################################################################################
+#
+# ANALYSE DU CODE ET DES FONCTIONNALITES
+#
+###########################################################################################
+
 def analyze_code(code, file_path, output_file):
     try:
         tree = ast.parse(code)
@@ -67,7 +81,8 @@ def analyze_package(directory, output_file):
                 analyze_file(file_path, output_file)
 
 if __name__ == "__main__":
-    
+
+    # Récupération des chemins d'accès
     with open('envpath.txt', 'r') as file:
         lines = file.readlines()
 
@@ -75,12 +90,14 @@ if __name__ == "__main__":
     numpy_dir_v2 = lines[1].strip()[2:-2]
 
     changes = compare_versions(numpy_dir_v1, numpy_dir_v2)
-    
+
+    # Création du fichier de comparaison des scripts
     with open('txt_compare.txt', 'w', encoding='utf-8') as out_file:
         for file, diff in changes.items():
             out_file.write(f"Changes in {file}:\n")
             out_file.write('\n'.join(diff))
             out_file.write("\n\n")
-            
+
+    # Création des deux fichiers d'analyse des scripts
     analyze_package(numpy_dir_v1, 'numpy_v1_analysis.txt')
     analyze_package(numpy_dir_v2, 'numpy_v2_analysis.txt')
