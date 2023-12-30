@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# Vérifier si coverage.py est installé
+pip3 show coverage > /dev/null 2>&1
+
+# Vérifier le code de sortie de la commande précédente
+if [ $? -ne 0 ]; then
+    echo "coverage.py not found. Installation in progress..."
+    pip install coverage
+    if [ $? -ne 0 ]; then
+        echo "Coverage.py installation failed."
+        exit 1
+    else
+        echo "coverage.py has been successfully installed."
+    fi
+fi
+
+# Initialiser une variable pour suivre la création des environnements
+env_created=0
+
+# Boucle sur les deux environnements
+for j in 1 2; do
+    # Vérifier si l'environnement virtuel existe
+    if [ ! -d "numpy_v${j}" ]; then
+        # Environnement n'existe pas, le créer et installer NumPy
+        virtualenv numpy_v${j}
+        source numpy_v${j}/bin/activate
+
+        # Installer NumPy
+        if [ $j -eq 1 ]; then
+            pip3 install numpy==1.24.0
+        else
+            pip3 install numpy==1.23.0
+        fi
+
+        # Installer Hypothesis
+        pip3 install hypothesis
+
+        # Afficher le chemin de NumPy et l'ajouter à envpath.txt
+        python -c "import numpy; print(numpy.__path__)" >> envpath.txt
+
+        # Désactiver l'environnement
+        deactivate
+
+        # Marquer que les environnements ont été créés
+        env_created=1
+    fi
+done
+
+# Enregistrer un message si de nouveaux environnements ont été créés
+if [ $env_created -eq 1 ]; then
+    echo "The numpy virtual environments have been added to the directory." > report.txt
+fi
+
+# Exécuter les tests dans les environnements
+for j in 1 2; do
+    # Activer l'environnement
+    source numpy_v${j}/bin/activate >> report.txt 2>&1
+    echo "Activating numpy_v${j} environment and running tests..." >> report.txt
+
+    # Exécuter les tests avec coverage et stocker temporairement les résultats
+    coverage run -m unittest __init__ > temp_results.txt 2>&1
+
+    # Ajouter le rapport de couverture au fichier report.txt
+    coverage report -m >> report.txt
+    echo >> report.txt
+
+    # Ajouter les résultats des tests stockés temporairement à report.txt
+    cat temp_results.txt >> report.txt
+    echo >> report.txt
+
+    # Supprimer le fichier temporaire
+    rm temp_results.txt
+
+    # Désactiver l'environnement
+    deactivate >> report.txt 2>&1
+    if [ $j -eq 2 ]; then
+        python versioning.py
+    fi
+done
